@@ -1,0 +1,33 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger the workflow on pull requests to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Run the build on the latest Ubuntu environment
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Checkout the code from the repository
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'  # Set up JDK 21 for your project
+
+    - name: Build with Maven
+      run: mvn clean install  # Run the Maven build process
+
+    - name: Run tests
+      run: mvn test  # Run Maven tests
+
+    - name: Deploy
+      if: success()  # Only run if previous steps succeed
+      run: mvn deploy  # Deploy the project (optional step)
+
