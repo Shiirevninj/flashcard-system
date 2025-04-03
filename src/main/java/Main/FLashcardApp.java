@@ -8,11 +8,12 @@ import java.util.Scanner;
 
 import Main.Card.Flashcard;
 import Main.organizer.CardSortingStrategy;
+import Main.organizer.MistakesFirstSorter;
 import Main.organizer.RandomCardSorter;
 import Main.organizer.WorstFirstSorter;
 
 
-public class FLashcardApp {
+public class FlashcardApp {
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -21,13 +22,13 @@ public class FLashcardApp {
     private static final String HELP_MESSAGE = ANSI_YELLOW + """
             Usage: <cards-file> [options]
             Options:
-              --help                      Show help message
-              --order <order>             Set card order (random, worst-first, recent-mistakes-first)
-              --repetitions <num>         Number of repetitions per card
-              --invertCards               Invert question and answer
+            --help                      tuslamjiin medeelliig haruulna
+            --order <order>             cardiin daraalliig uurchluh (random, worst-first, recent-mistakes-first)
+            --repetitions <num>         songoson toogoor asuultiig asuuna
+            --invertCards               asuult bolon hariultiin bairiig solino
             """ + ANSI_RESET;
     private static final String START_MESSAGE = """
-            If you need help with the settings type --help""";
+            Tohirgooni tuslamj heregtei bol --help""";
 
     @SuppressWarnings("ConvertToTryWithResources")
     public static void main(String[] args) {
@@ -38,6 +39,7 @@ public class FLashcardApp {
         int repetitions = 1;
         boolean invertCards = false;
 
+
         List<Flashcard> cards = loadCards(cardsFile);
             if (cards == null) {
                 return;
@@ -45,7 +47,7 @@ public class FLashcardApp {
 
         while (true) {
             System.out.println(START_MESSAGE);
-            System.out.println("Default is --order " + order + " --repetitions " + repetitions + " --invertCards " + invertCards);
+            System.out.println("Odoogiin tohirgoo --order " + order + " --repetitions " + repetitions + " --invertCards " + invertCards);
             System.out.println("Urgeljluuleh bolon tohirgoog uurchluhiig husvel enter darna uu:");
             String input = mainScanner.nextLine();
             String[] settings = input.split(" ");
@@ -68,7 +70,7 @@ public class FLashcardApp {
                         if (i + 1 <= settings.length) {
                             order = settings[++i];
                         } else {
-                            System.err.println("Error: Missing argument for --order");
+                            System.err.println("Error: argument dutuu baina --order");
                             return;
                         }
                     }
@@ -77,7 +79,7 @@ public class FLashcardApp {
                             try {
                                 repetitions = Integer.parseInt(settings[++i]);
                             } catch (NumberFormatException e) {
-                                System.err.println("Error: WRONG NUMBER FOOL");
+                                System.err.println("Error:");
                                 return;
                             }
                         }
@@ -88,7 +90,7 @@ public class FLashcardApp {
                     }
                     default -> {
                         System.err.println("Error: " + settings[i]);
-                        System.out.println("Type --help to see the options");
+                        System.out.println("--help songoltuudiig harah");
                     }
 
                 }
@@ -100,11 +102,13 @@ public class FLashcardApp {
 
 
             if (invertCards) {
+                List<Flashcard> invertedCards = new ArrayList<>();
                 for (Flashcard card : cards) {
-                    String temp = card.getQuestion();
-                    card = new Flashcard(card.getAnswer(), temp);
+                    invertedCards.add(new Flashcard(card.getAnswer(), card.getQuestion()));
                 }
+                cards = invertedCards;
             }
+            
 
             CardSortingStrategy organizer = new RandomCardSorter();
             switch (order) {
@@ -114,14 +118,17 @@ public class FLashcardApp {
                 case "worst-first" -> {
                     organizer = new WorstFirstSorter();
                 }
+                case "recent-mistakes-first" -> {
+                    organizer = new MistakesFirstSorter();
+                }
                 default -> {
                     System.err.println("Error: Iim daraalal baihgui");
                 }
             }
-            System.out.println("\nflashcard iig ehluuleh bol 'start' garah bol 'quit' darna uu");
+            System.out.println("\nflashcard iig ehluuleh bol 'start' garah bol 'to leave' darna uu");
             String command = mainScanner.nextLine().trim().toLowerCase();
 
-            if (command.equals("quit")) {
+            if (command.equals("to leave")) {
                 System.out.print("garch baina...");
                 mainScanner.close();
                 break;
@@ -140,8 +147,8 @@ public class FLashcardApp {
     }
 
     /**
-     * Asuultuudiig file aas unshina.
-     */
+    * Asuultuudiig file aas unshina.
+    */
     private static List<Flashcard> loadCards(String filePath) {
         List<Flashcard> cards = new ArrayList<>();
 
@@ -149,7 +156,7 @@ public class FLashcardApp {
             filePath = "/" + filePath;
         }
 
-        try (InputStream inputStream = FLashcardApp.class.getResourceAsStream(filePath)) {
+        try (InputStream inputStream = FlashcardApp.class.getResourceAsStream(filePath)) {
             if (inputStream == null) {
                 System.err.println("Error: Could not find resource file: " + filePath);
                 return null;

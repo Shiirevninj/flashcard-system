@@ -1,0 +1,6 @@
+Main\organizer\CardSortingStrategy.class
+Main\Card\Flashcard.class
+Main\organizer\WorstFirstSorter.class
+Main\FlashcardApp.class
+Main\organizer\RandomCardSorter.class
+Main\organizer\MistakesFirstSorter.class
