@@ -158,7 +158,7 @@ public class FlashcardApp {
 
         try (InputStream inputStream = FlashcardApp.class.getResourceAsStream(filePath)) {
             if (inputStream == null) {
-                System.err.println("Error: Could not find resource file: " + filePath);
+                System.err.println("Error: failiig olj chadsangui: " + filePath);
                 return null;
             }
 
@@ -172,7 +172,7 @@ public class FlashcardApp {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Error read file: " + e.getMessage());
             return null;
         }
 
