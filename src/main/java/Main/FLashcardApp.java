@@ -52,10 +52,8 @@ public class FlashcardApp {
             String input = mainScanner.nextLine();
             String[] settings = input.split(" ");
 
-            boolean showHelp = false;
-
+            boolean showHelp = false;       
             
-
             for (int i = 0; i < settings.length; i++) {
                 switch (settings[i]) {
                     case "--help" -> {
